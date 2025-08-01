@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing KPI Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .kpi-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .kpi-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      width: 180px;
+      text-align: center;
+      margin: 10px;
+    }
+    .kpi-card h2 {
+      font-size: 22px;
+      margin: 10px 0 5px;
+      color: #007bff;
+    }
+    .chart-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    canvas {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin: 10px;
+      padding: 15px;
+      width: 500px !important;
+      height: 300px !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>Marketing Campaign KPI Dashboard</h1>
+
+  <!-- KPI Cards -->
+  <div class="kpi-container">
+    <div class="kpi-card">
+      <p>Total Impressions</p>
+      <h2 id="impressions">0</h2>
+    </div>
+    <div class="kpi-card">
+      <p>Total Clicks</p>
+      <h2 id="clicks">0</h2>
+    </div>
+    <div class="kpi-card">
+      <p>CTR (%)</p>
+      <h2 id="ctr">0%</h2>
+    </div>
+    <div class="kpi-card">
+      <p>Total Conversions</p>
+      <h2 id="conversions">0</h2>
+    </div>
+    <div class="kpi-card">
+      <p>ROI (%)</p>
+      <h2 id="roi">0%</h2>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="chart-container">
+    <canvas id="campaignChart"></canvas>
+    <canvas id="revenueChart"></canvas>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Sample Data (Replace with API/DB data if needed)
+    const campaigns = [
+      { name: "Summer Promo", impressions: 10000, clicks: 250, conversions: 50, cost: 5000, revenue: 10000 },
+      { name: "Winter Promo", impressions: 8000, clicks: 200, conversions: 30, cost: 4000, revenue: 6000 },
+      { name: "Diwali Blast", impressions: 12000, clicks: 300, conversions: 70, cost: 7000, revenue: 15000 },
+      { name: "New Year Buzz", impressions: 15000, clicks: 350, conversions: 80, cost: 8000, revenue: 17000 },
+    ];
+
+    // Calculate KPIs
+    const totalImpressions = campaigns.reduce((a,c) => a + c.impressions, 0);
+    const totalClicks = campaigns.reduce((a,c) => a + c.clicks, 0);
+    const totalConversions = campaigns.reduce((a,c) => a + c.conversions, 0);
+    const totalCost = campaigns.reduce((a,c) => a + c.cost, 0);
+    const totalRevenue = campaigns.reduce((a,c) => a + c.revenue, 0);
+
+    const ctr = ((totalClicks / totalImpressions) * 100).toFixed(2);
+    const roi = (((totalRevenue - totalCost) / totalCost) * 100).toFixed(2);
+
+    // Update KPI cards
+    document.getElementById('impressions').innerText = totalImpressions.toLocaleString();
+    document.getElementById('clicks').innerText = totalClicks.toLocaleString();
+    document.getElementById('ctr').innerText = ctr + "%";
+    document.getElementById('conversions').innerText = totalConversions.toLocaleString();
+    document.getElementById('roi').innerText = roi + "%";
+
+    // Campaign Performance Bar Chart
+    const ctx1 = document.getElementById('campaignChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: campaigns.map(c => c.name),
+        datasets: [
+          {
+            label: 'Impressions',
+            data: campaigns.map(c => c.impressions),
+            backgroundColor: '#007bff'
+          },
+          {
+            label: 'Clicks',
+            data: campaigns.map(c => c.clicks),
+            backgroundColor: '#28a745'
+          }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    });
+
+    // Revenue Trend Line Chart
+    const ctx2 = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: campaigns.map(c => c.name),
+        datasets: [
+          {
+            label: 'Revenue',
+            data: campaigns.map(c => c.revenue),
+            borderColor: '#ffc107',
+            backgroundColor: 'rgba(255,193,7,0.2)',
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    });
+  </script>
+</body>
+</html>
